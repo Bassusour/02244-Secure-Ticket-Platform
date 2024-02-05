@@ -1,0 +1,7 @@
+ofmc --numSess 2 "filename"
+
+make sure to have the correct path!
+
+windows:
+.\ofmc --numSess 2 AMP-given.AnB
+.\ofmc --numSess 2 Selfie.AnB

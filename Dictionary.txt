@@ -1,0 +1,8 @@
+program keywords
+- pw: most likely a function to describe a password fx: pw(a,b)
+- pk: public key for a specific agent fx: pk(A)
+- sk: shared key
+
+keys:
+- {|M|}K denotes symmetric encryption of message M with key K
+- {M}K denotes asymmetric encryption of M with public key K 
