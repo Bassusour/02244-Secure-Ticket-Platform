@@ -1,0 +1,21 @@
+Protocol: Login
+
+Types:
+Agent A, s_ticket;
+Number N1;
+Function secretk, kdf;
+
+Knowledge:
+A: A, s_ticket, exp(g,secretk(s_ticket)), g, secretk(A), kdf;
+s_ticket: A, s_ticket, exp(g,secretk(A)), g, secretk(s_ticket), kdf;
+
+
+Actions:
+# A wants to establish communication with ticket platform 
+A->s_ticket: A 
+s_ticket->A: kdf(exp(exp(g,secretk(A)), secretk(s_ticket))), A, s_ticket
+A->s_ticket: A, s_ticket, kdf(exp(exp(g,secretk(A)), secretk(s_ticket))), A, s_ticket
+
+Goals: 
+kdf(exp(exp(g,secretk(A)), secretk(s_ticket))) secret between A, s_ticket
+
