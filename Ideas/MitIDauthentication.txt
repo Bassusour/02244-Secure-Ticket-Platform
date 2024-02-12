@@ -1,0 +1,5 @@
+MitID Authentication v1
+- Client sends credentials as prove of identity to MitID server. 
+- MitID server verifies the information with shared knowledge and sends a public/private key pair back. 
+- Client uses this key pair in all future transmissions. 
+
