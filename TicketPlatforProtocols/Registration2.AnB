@@ -1,0 +1,26 @@
+Protocol: Registration2
+
+Types:
+  Agent A,B,s;
+  Number NA,NB;
+  Symmetric_key KAB;
+  Function sk,pre, auth
+
+Knowledge:
+  A: A,B,s,sk(A,s), pk(B), usrTicket, pwTicket, username, password;
+  B: A,B,s,sk(B,s), pk(B), inv(pk(B));
+  s: A,B,s,sk(A,s),sk(B,s),auth;
+  where A!=B
+
+Actions:
+#register me
+A->B: {A, B, usrTicket, pwTicket}pk(B)
+B->s: {A, B}sk(B,s)
+s->A: {A, B}sk(A,s)
+A->s: {A, B, username, password}sk(A,s)
+s->B: {A, B, auth(username, password)}sk(B,s)
+ 
+Goals: 
+s authenticates A on username, password
+# B authenticates A on s
+
