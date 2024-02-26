@@ -1,0 +1,24 @@
+Protocol: Login
+
+Types:
+Agent A, s_ticket;
+Number N1;
+Function secretk, kdf;
+
+Knowledge:
+A: A, B, idp;
+idp: A, B;
+B: idp
+
+Actions:
+# A wants to establish communication with ticket platform (register)
+A->B: #register me
+B->idp: #B wants to authenticate A
+idp->A: #idp asks for A's credentials
+A->idp: #A uses usrname and pw to authenticate
+idp->B: #A is authenticated
+
+
+Goals: 
+kdf(exp(exp(g,secretk(A)), secretk(s_ticket))) secret between A, s_ticket
+
