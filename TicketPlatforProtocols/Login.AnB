@@ -19,3 +19,4 @@ A->s_ticket: A, s_ticket, kdf(exp(exp(g,secretk(A)), secretk(s_ticket))), A, s_t
 Goals: 
 kdf(exp(exp(g,secretk(A)), secretk(s_ticket))) secret between A, s_ticket
 
+# This doesn't work because it can't prove the identity of the clients (A), we need MitID. 

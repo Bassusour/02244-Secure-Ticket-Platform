@@ -1,0 +1,21 @@
+Protocol: Registration
+
+Types:
+Agent A, s, B;
+Function sk, auth;
+
+Knowledge:
+A: A, s, username, password, sk(A,s);
+s: A, s, sk(A,s), auth, pk(A), inv(pk(A));
+where A!=B
+
+Actions:
+A -> s: {|username, password|}sk(A,s)
+s -> A: {|auth(username, password), pk(A), inv(pk(A))|}sk(A,s)
+
+Goals: 
+s authenticates A on auth(username, password)
+
+
+# Generate public/private key pair for A
+# A signs username and password with its private key

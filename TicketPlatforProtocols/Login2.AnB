@@ -12,7 +12,7 @@ B: idp
 
 Actions:
 # A wants to establish communication with ticket platform (register)
-A->B: #register me
+A->B: 
 B->idp: #B wants to authenticate A
 idp->A: #idp asks for A's credentials
 A->idp: #A uses usrname and pw to authenticate
