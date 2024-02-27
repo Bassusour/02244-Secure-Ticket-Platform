@@ -5,19 +5,17 @@ Types:
   Number N1, N2;
 
 Knowledge:
-  A: A,B,s,sk(A,s), pk(B);
-  B: A,B,s,sk(B,s), pk(B), inv(pk(B));
-  s: A,B,s,sk(A,s),sk(B,s);
+  A: A, B, s, sk(A,s), pk(B);
+  B: A, B, s, sk(B,s), pk(B), inv(pk(B));
+  s: A, B, s, sk(A,s), sk(B,s);
   where A!=B
 
 Actions:
-A->B: {A, B, UsrTicket, PwTicket}pk(B)
-B->s: {|A, B|}sk(B,s)
-s->A: {|A, B|}sk(A,s)
-A->s: {|A, B, UsrMitId, PwMitId|}sk(A,s)
-s->B: {|A, B|}sk(A,s)
+A->B: {A, B, N1}pk(B)
+B->s: {|A, B, N1, N2|}sk(B,s)
+s->A: {|A, B, N1, N2|}sk(A,s)
+A->s: {|A, B, N1, N2, UsrMitId, PwMitId, APubKey|}sk(A,s)
+s->B: {|A, B, N1, N2, APubKey|}sk(A,s)
 
 Goals: 
 s weakly authenticates A on UsrMitId, PwMitId
-# UsrTicket, PwTicket secret between A on B
-
