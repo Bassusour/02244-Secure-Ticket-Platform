@@ -1,0 +1,30 @@
+# Logbook
+
+#### Registration version 0.2 #####################
+
+Protocol: Registration2
+
+Types:
+  Agent A,B,s;
+  Number N1, N2;
+
+Knowledge:
+  A: A,B,s,sk(A,s), pk(B);
+  B: A,B,s,sk(B,s), pk(B), inv(pk(B));
+  s: A,B,s,sk(A,s),sk(B,s);
+  where A!=B
+
+Actions:
+A->B: {A, B, UsrTicket, PwTicket}pk(B)
+B->s: {|A, B|}sk(B,s)
+s->A: {|A, B|}sk(A,s)
+A->s: {|A, B, UsrMitId, PwMitId|}sk(A,s)
+s->B: {|A, B|}sk(A,s)
+
+Goals: 
+s weakly authenticates A on UsrMitId, PwMitId
+
+###################################################
+
+
+

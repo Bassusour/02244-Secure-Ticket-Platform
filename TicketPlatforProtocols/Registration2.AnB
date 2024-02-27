@@ -4,18 +4,34 @@ Types:
   Agent C,M,mitId;
   Number N1, N2;
 
+# Knowledge:
+#   C: C,M,mitId,sk(C,mitId), pk(M);
+#   M: C,M,mitId,sk(M,mitId), pk(M), inv(pk(M));
+#   mitId: C,M,mitId,sk(C,mitId),sk(M,mitId);
+#   where C!=M
+
+# Actions:
+# C->M: {C, M, UsrTicket, PwTicket}pk(M)
+# M->mitId: {|C, M|}sk(M,mitId)
+# mitId->C: {|C, M|}sk(C,mitId)
+# C->mitId: {|C, M, UsrMitId, PwMitId|}sk(C,mitId)
+# mitId->M: {|C, M|}sk(C,mitId)
+
+# Goals: 
+# mitId weakly authenticates C on UsrMitId, PwMitId
+
 Knowledge:
-  C: C,M,mitId,sk(C,mitId), pk(M);
-  M: C,M,mitId,sk(M,mitId), pk(M), inv(pk(M));
-  mitId: C,M,mitId,sk(C,mitId),sk(M,mitId);
-  where C!=M
+  A: A, B, s, sk(A,s), pk(B);
+  B: A, B, s, sk(B,s), pk(B), inv(pk(B));
+  s: A, B, s, sk(A,s), sk(B,s);
+  where A!=B
 
 Actions:
-C->M: {C, M, UsrTicket, PwTicket}pk(M)
-M->mitId: {|C, M|}sk(M,mitId)
-mitId->C: {|C, M|}sk(C,mitId)
-C->mitId: {|C, M, UsrMitId, PwMitId|}sk(C,mitId)
-mitId->M: {|C, M|}sk(C,mitId)
+A->B: {A, B, N1}pk(B)
+B->s: {|A, B, N1, N2|}sk(B,s)
+s->A: {|A, B, N1, N2|}sk(A,s)
+A->s: {|A, B, N1, N2, UsrMitId, PwMitId, APubKey|}sk(A,s)
+s->B: {|A, B, N1, N2, APubKey|}sk(A,s)
 
 Goals: 
-mitId weakly authenticates C on UsrMitId, PwMitId
+s weakly authenticates A on UsrMitId, PwMitId
