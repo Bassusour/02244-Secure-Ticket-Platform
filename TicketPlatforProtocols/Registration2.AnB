@@ -1,23 +1,21 @@
 Protocol: Registration2
 
 Types:
-  Agent A,B,s;
+  Agent C,M,mitId;
   Number N1, N2;
 
 Knowledge:
-  A: A,B,s,sk(A,s), pk(B);
-  B: A,B,s,sk(B,s), pk(B), inv(pk(B));
-  s: A,B,s,sk(A,s),sk(B,s);
-  where A!=B
+  C: C,M,mitId,sk(C,mitId), pk(M);
+  M: C,M,mitId,sk(M,mitId), pk(M), inv(pk(M));
+  mitId: C,M,mitId,sk(C,mitId),sk(M,mitId);
+  where C!=M
 
 Actions:
-A->B: {A, B, UsrTicket, PwTicket}pk(B)
-B->s: {|A, B|}sk(B,s)
-s->A: {|A, B|}sk(A,s)
-A->s: {|A, B, UsrMitId, PwMitId|}sk(A,s)
-s->B: {|A, B|}sk(A,s)
+C->M: {C, M, UsrTicket, PwTicket}pk(M)
+M->mitId: {|C, M|}sk(M,mitId)
+mitId->C: {|C, M|}sk(C,mitId)
+C->mitId: {|C, M, UsrMitId, PwMitId|}sk(C,mitId)
+mitId->M: {|C, M|}sk(C,mitId)
 
 Goals: 
-s weakly authenticates A on UsrMitId, PwMitId
-# UsrTicket, PwTicket secret between A on B
-
+mitId weakly authenticates C on UsrMitId, PwMitId
