@@ -32,6 +32,7 @@ Goals:
 mitId authenticates C on UsrMitId, PwMitId
 M authenticates C on ProofOfId
 Username, Password secret between C, M
+ProofOfId secret between C, M
 
 # Merchant can now be sure of the customer's identity
 # mitId acts as a trusted third party to authenticate the customer
