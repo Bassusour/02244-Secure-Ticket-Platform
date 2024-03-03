@@ -1,4 +1,4 @@
-Protocol: Registration4
+Protocol: Registration5
 
 Types:
 Agent C,M,mitId;
@@ -23,18 +23,15 @@ mitId -> C: {|C, M, N1|}sk(C,mitId)
 C -> mitId: {C, M, UsrMitId, PwMitId, N1}pk(mitId)
 
 # mitID authenticates the customer
-mitId -> M: {C, M, N1}pk(M)
+mitId -> M: {C, M, N1, ProofOfId}pk(M)
 
 # merchant acknowledges the customer's registration
 M -> C: {|C, M, N1|}sk(C, M)
 
 Goals:
 mitId authenticates C on UsrMitId, PwMitId
+M authenticates C on ProofOfId
 
-# Added nonce to avoid replay attacks
-# Ensures freshness of the messages
-# imposter cannot replay the messages, since the nonce is different each time
-# imposter cannot impersonate the customer, since the nonce is different each time
+# Merchant can now be sure of the customer's identity
+# mitId acts as a trusted third party to authenticate the customer
 
-# Problem
-# The merchant don't verify the customer's ID

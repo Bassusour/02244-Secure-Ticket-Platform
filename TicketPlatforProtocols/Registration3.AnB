@@ -1,12 +1,12 @@
 Protocol: Registration3
 
 Types:
-Agent C,M,bank,mitId;
+Agent C,M,mitId;
 Number Username, Password, UsrMitId, PwMitId;
 
 Knowledge:
 C: C, M, mitId, pk(mitId), pk(M), sk(C, M), sk(C,mitId);
-M: C, M, mitId, pk(mitId), pk(M), inv(pk(M)), inv(pk(M));
+M: C, M, mitId, pk(mitId), pk(M), inv(pk(M));
 mitId: C, M, mitId, pk(mitId), sk(C,mitId), pk(M), inv(pk(mitId));
 where C!=M, M!=mitId, C!=mitId
 
@@ -32,7 +32,5 @@ mitId authenticates C on UsrMitId, PwMitId
 
 ## Problem:
 # imposter impersonates C and M, fooling mitId
-# Lack of authenticity checking
-# MitId does not verify authenticiy of the merchant
-# No integrity checks (i can modify contents undetected)
-# This is a man in the middle attack (i impersonates M)
+# No freshness checking of messages (no replay protection)
+# This is a combination of man in the middle attack and replay attack
