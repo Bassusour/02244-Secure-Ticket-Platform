@@ -30,6 +30,8 @@ M -> C: {|C, M|}sk(C, M)
 Goals:
 mitId authenticates C on UsrMitId, PwMitId
 
+# Now properly authenticates
+
 ## Problem:
 # imposter impersonates C and M, fooling mitId
 # No freshness checking of messages (no replay protection)

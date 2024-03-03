@@ -1,0 +1,16 @@
+Protocol: PurchaseTickets
+
+Types: 
+Agent C, M, bank
+
+Knowledge:
+C: C, M, bank, pk(M), pk(bank), sk(C, M);
+M: C, M, bank, pk(bank), pk(M), inv(pk(M));
+bank: C, M, bank, pk(M), inv(pk(bank));
+where C!=M, C!=bank, M!=bank
+
+Actions:
+# Information from registration protocol
+C *->* M: Username, Password, sk(C, M)
+
+

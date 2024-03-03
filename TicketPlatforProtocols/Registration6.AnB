@@ -1,4 +1,4 @@
-Protocol: Registration5
+Protocol: Registration6
 
 Types:
 Agent C,M,mitId;
@@ -13,29 +13,26 @@ where C!=M, M!=mitId, C!=mitId
 
 Actions:
 # Customer registers with the merchant
-C -> M: {C, M, Username, Password, sk(C, M)}pk(M)
+C -> M: {C, M, Username, Password, sk(C, M), N}pk(M)
 
 # Merchant requests mitID to authenticate the customer
-M -> mitId: {C, M}pk(mitId)
-mitId -> C: {|C, M, N1|}sk(C,mitId)
+M -> mitId: {C, M, N, N1}pk(mitId)
+mitId -> C: {|C, M, N, N1, N2|}sk(C,mitId)
 
 # Customer verifies their identity with mitID
-C -> mitId: {C, M, UsrMitId, PwMitId, N1}pk(mitId)
+C -> mitId: {C, M, UsrMitId, PwMitId, N, N1, N2}pk(mitId)
 
 # mitID authenticates the customer with its signature
-mitId -> C: {|{C, M, N1, ProofOfId}inv(pk(mitId))|}sk(C,mitId)
+mitId -> C: {|{C, M, N, N1, N2, ProofOfId}inv(pk(mitId))|}sk(C,mitId)
 
 # Customer sends the proof of identity to the merchant
-C -> M: {|{C, M, N1, ProofOfId}inv(pk(mitId))|}sk(C, M)
-
-# merchant acknowledges the customer's registration
-M -> C: {|C, M, N1|}sk(C, M)
+C -> M: {|{C, M, N, N1, N2, ProofOfId}inv(pk(mitId))|}sk(C, M)
 
 Goals:
 mitId authenticates C on UsrMitId, PwMitId
 M authenticates C on ProofOfId
+Username, Password secret between C, M
 
-# Problem
-# Replay attack!
-# Let chatGPT handle the explanation (It's pretty long)
-
+# Merchant can now be sure of the customer's identity
+# mitId acts as a trusted third party to authenticate the customer
+# Nonces everywhere to prevent replay attacks
