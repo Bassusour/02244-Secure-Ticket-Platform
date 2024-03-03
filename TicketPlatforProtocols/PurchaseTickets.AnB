@@ -1,16 +1,39 @@
 Protocol: PurchaseTickets
 
 Types: 
-Agent C, M, bank
+Agent C, M, bank, mitId;
+Function creditCard;
+Number ProofOfId;
 
 Knowledge:
-C: C, M, bank, pk(M), pk(bank), sk(C, M);
-M: C, M, bank, pk(bank), pk(M), inv(pk(M));
-bank: C, M, bank, pk(M), inv(pk(bank));
+C: C, M, bank, pk(M), pk(bank), pk(mitId), sk(C, M), creditCard(C, bank);
+M: C, M, bank, pk(bank), pk(M), pk(mitId), sk(C, M), inv(pk(M));
+bank: C, M, bank, pk(M), pk(mitId), inv(pk(bank)), creditCard(C, bank);
+mitId: C, M, bank, pk(M), pk(bank), pk(mitId), inv(pk(mitId));
 where C!=M, C!=bank, M!=bank
 
 Actions:
 # Information from registration protocol
-C *->* M: Username, Password, sk(C, M)
+# C *->* M: ProofOfId
+# C *->* M: {ProofOfId}inv(pk(mitId))
 
+M -> C: { M, C }sk(C, M)
 
+# Customer requests a ticket
+C -> M: {C, M, TicketOrder}pk(M)
+
+# Merchant requests payment
+M -> C: {|C, M, TicketOrder, Price|}sk(C, M)
+
+# Customer requests money from bank
+C -> bank: {C, M, creditCard(C, bank), TicketOrder, Price}pk(bank)
+
+# Bank authorizes payment
+bank -> M: {C, M, {C, M, TicketOrder}inv(pk(bank))}pk(M)
+
+M -> C: {|C, M, TicketOrder, Price|}sk(C, M)
+
+Goals:
+creditCard(C, bank) secret between C, bank
+
+# Needs nonces to prevent replay attacks

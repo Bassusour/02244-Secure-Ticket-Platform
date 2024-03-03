@@ -1,0 +1,58 @@
+Protocol: PurchaseTicketsMerged
+
+Types: 
+Agent C, M, bank, mitId;
+Function creditCard;
+Number ProofOfId, N1, N2, N3;
+
+Knowledge:
+C: C, M, mitId, pk(mitId), pk(M), pk(bank), sk(C, M), sk(C,mitId), sk(C,bank), creditCard(C, bank);
+M: C, M, mitId, pk(mitId), pk(bank), pk(M), inv(pk(M));
+bank: C, M, bank, pk(M), pk(bank), pk(mitId), inv(pk(bank)), sk(C,bank), creditCard(C, bank);
+mitId: C, M, mitId, pk(mitId), sk(C,mitId), pk(M), inv(pk(mitId));
+where C!=M, C!=bank, M!=bank
+
+Actions:
+C -> M: {C, M, Username, Password, sk(C, M), N1}pk(M)
+
+# Merchant requests mitID to authenticate the customer
+M -> mitId: {C, M, N1, N2}pk(mitId)
+mitId -> C: {|C, M, N1, N2, N3|}sk(C,mitId)
+
+# Customer verifies their identity with mitID
+C -> mitId: {C, M, UsrMitId, PwMitId, N1, N2, N3}pk(mitId)
+
+# mitID authenticates the customer with its signature
+mitId -> C: {|{C, M, N1, N2, N3, ProofOfId}inv(pk(mitId))|}sk(C,mitId)
+
+# Customer sends the proof of identity to the merchant
+C -> M: {|{C, M, N1, N2, N3, ProofOfId}inv(pk(mitId))|}sk(C, M)
+
+# new protocol
+# ----------------------------------------------
+M -> C: { M, C }sk(C, M)
+
+# Customer requests a ticket
+C -> M: {C, M, TicketOrder}pk(M)
+
+# Merchant requests payment
+M -> C: {|C, M, TicketOrder, Price|}sk(C, M)
+
+# Customer requests money from bank
+C -> bank: {C, M, creditCard(C, bank), TicketOrder, Price, {C, M, N1, N2, N3, ProofOfId}inv(pk(mitId))}pk(bank)
+
+# Bank authorizes payment
+bank -> C: {|C, M, {TicketOrder, Price}inv(pk(bank))|}sk(C,bank)
+
+C -> M: {|C, M, {C, M, N1, N2, N3, ProofOfId}inv(pk(bank))|}sk(C, M)
+
+Goals:
+mitId authenticates C on UsrMitId, PwMitId
+M authenticates C on ProofOfId
+Username, Password secret between C, M
+ProofOfId secret between C, M
+creditCard(C, bank) secret between C, bank
+bank authenticates C on ProofOfId
+
+# Takes too long to run for 2 sessions
+# Needs some nonces to be added
