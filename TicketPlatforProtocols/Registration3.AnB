@@ -2,7 +2,7 @@ Protocol: Registration3
 
 Types:
 Agent C,M,bank,mitId;
-Number Username, Password, UsrMitId, PwMitId, N;
+Number Username, Password, UsrMitId, PwMitId;
 
 Knowledge:
 C: C, M, mitId, pk(mitId), pk(M), sk(C, M), sk(C,mitId);
@@ -12,20 +12,27 @@ where C!=M, M!=mitId, C!=mitId
 
 Actions:
 # Customer registers with the merchant
-C -> M: {C, M, Username, Password, N, sk(C, M)}pk(M)
+C -> M: {C, M, Username, Password, sk(C, M)}pk(M)
 
 # Merchant requests mitID to authenticate the customer
-M -> mitId: {C, M, N }pk(mitId)
-mitId -> C: {|C, M, N|}sk(C,mitId)
+M -> mitId: {C, M}pk(mitId)
+mitId -> C: {|C, M|}sk(C,mitId)
 
 # Customer verifies their identity with mitID
-C -> mitId: {C, M, UsrMitId, PwMitId, N}pk(mitId)
+C -> mitId: {C, M, UsrMitId, PwMitId}pk(mitId)
 
 # mitID authenticates the customer
-mitId -> M: {C, M, N}pk(M)
+mitId -> M: {C, M}pk(M)
 
 # merchant acknowledges the customer's registration
-M -> C: {|C, M, N|}sk(C, M)
+M -> C: {|C, M|}sk(C, M)
 
 Goals:
 mitId authenticates C on UsrMitId, PwMitId
+
+## Problem:
+# imposter impersonates C and M, fooling mitId
+# Lack of authenticity checking
+# MitId does not verify authenticiy of the merchant
+# No integrity checks (i can modify contents undetected)
+# This is a man in the middle attack (i impersonates M)
