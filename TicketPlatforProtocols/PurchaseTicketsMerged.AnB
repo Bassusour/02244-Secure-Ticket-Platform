@@ -44,7 +44,7 @@ C -> bank: {C, M, creditCard(C, bank), TicketOrder, Price, {C, M, N1, N2, N3, Pr
 # Bank authorizes payment
 bank -> C: {|C, M, {TicketOrder, Price}inv(pk(bank))|}sk(C,bank)
 
-C -> M: {|C, M, {C, M, N1, N2, N3, ProofOfId}inv(pk(bank))|}sk(C, M)
+C -> M: {|C, M, {TicketOrder, Price}inv(pk(bank))|}sk(C, M)
 
 Goals:
 mitId authenticates C on UsrMitId, PwMitId
