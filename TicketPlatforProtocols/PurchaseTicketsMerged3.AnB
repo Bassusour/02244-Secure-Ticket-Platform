@@ -2,44 +2,43 @@ Protocol: PurchaseTicketsMerged3
 
 Types: 
 Agent C, M, bank, mitId;
-Function creditCard;
-Number ProofOfId, N1, N2, N3, ProofOfId;
+Function creditCard, mac;
+Number ProofOfId, N1, N2, N3, ProofOfId, Price;
 
 Knowledge:
 C: C, M, mitId, pk(mitId), pk(M), pk(bank), sk(C, M), sk(C,mitId), sk(C,bank), creditCard(C, bank);
-M: C, M, mitId, pk(mitId), pk(bank), pk(M), inv(pk(M)), sk(C, M);
-bank: C, M, bank, pk(M), pk(bank), pk(mitId), inv(pk(bank)), creditCard(C, bank);
+M: C, M, mitId, pk(mitId), pk(bank), pk(M), inv(pk(M)), sk(C, M), mac;
+bank: C, M, bank, pk(M), pk(bank), pk(mitId), inv(pk(bank)), creditCard(C, bank), sk(C, bank);
 mitId: C, M, mitId, pk(mitId), sk(C,mitId), pk(M), inv(pk(mitId));
 where C!=M, C!=bank, M!=bank
 
 Actions:
 # Old protocol
-mitId ->* C: {|N1, {C, M, N1, ProofOfId}inv(pk(mitId))|}sk(C,mitId)
+mitId -> C: {|C, M, N1, {C, M, N1, ProofOfId}inv(pk(mitId))|}sk(C,mitId)
+C -> M: {|C, M, N1, {C, M, N1, ProofOfId}inv(pk(mitId))|}sk(C, M)
 
-# New protocol
+M -> C: {|C, M, N1|}sk(C, M)
+
 # Customer requests a ticket
-C *->* M: {|C, M, TicketOrder, N1, N2|}sk(C, M)
+C -> M: {|C, M, TicketOrder, N1, N2|}sk(C, M)
 
 # Merchant requests payment
-M *->* C: {|C, M, TicketOrder, Price, N1, N2|}sk(C, M)
-
-# Share key with bank
-# Keep?
-C *-> bank: {C, M, N1, N2, N3, sk(C, bank)}pk(bank)
-bank ->* C: {|C, M, N1, N2, N3, N4, sk(C, bank)|}sk(C, bank)
+M -> C: {|{C, M, TicketOrder, Price, N1, N2, N3}inv(pk(M))|}sk(C, M)
 
 # Customer requests money from bank
-C *-> bank: {C, M, creditCard(C, bank), TicketOrder, Price, N1, N2, N3, N4, {C, M, N1,ProofOfId}inv(pk(mitId))}pk(bank)
+C -> bank: {creditCard(C, bank), N1, N2, N3, {C, M, TicketOrder, Price, N1, N2, N3}inv(pk(M)), {C, M, N1,ProofOfId}inv(pk(mitId))}pk(bank)
 
 # Bank authorizes payment
-bank ->* C: {|C, M, N1, N2, N3, {N1, N2, N3, N4, TicketOrder, Price}inv(pk(bank))|}sk(C,bank)
+bank -> C: {|C, M, N1, N2, N3, {N1, N2, N3, TicketOrder, Price}inv(pk(bank))|}sk(C,bank)
 
-C *->* M: {|C, M, N1, N2, N3, {N1, N2, N3, N4, TicketOrder, Price}inv(pk(bank))|}sk(C, M)
+C -> M: {|C, M, N1, N2, N3, {N1, N2, N3, TicketOrder, Price}inv(pk(bank))|}sk(C, M)
 
 Goals:
-creditCard(C, bank) secret between C, bank
-bank authenticates C on ProofOfId
+# creditCard(C, bank) secret between C, bank
+bank weakly authenticates C on ProofOfId
 
 # N1 for mitId and C, 
 # N2 for C and m,
 # N3 for C and bank,
+
+# man in the middle attack, where i can pretend to be mitId. Is that possible?
