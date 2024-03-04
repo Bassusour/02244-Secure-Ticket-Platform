@@ -1,0 +1,39 @@
+Protocol: PurchaseTicketsMerged
+
+Types: 
+Agent C, M, bank, mitId;
+Function creditCard;
+Number ProofOfId, N1, N2, N3;
+
+Knowledge:
+C: C, M, mitId, pk(mitId), pk(M), pk(bank), sk(C, M), sk(C,mitId), sk(C,bank), creditCard(C, bank);
+M: C, M, mitId, pk(mitId), pk(bank), pk(M), inv(pk(M));
+bank: C, M, bank, pk(M), pk(bank), pk(mitId), inv(pk(bank)), sk(C,bank), creditCard(C, bank);
+mitId: C, M, mitId, pk(mitId), sk(C,mitId), pk(M), inv(pk(mitId));
+where C!=M, C!=bank, M!=bank
+
+Actions:
+# new protocol
+# ----------------------------------------------
+M *->* C: { M, C }sk(C, M)
+
+# Customer requests a ticket
+C *->* M: {C, M, TicketOrder}pk(M)
+
+# Merchant requests payment
+M *->* C: {|C, M, TicketOrder, Price|}sk(C, M)
+
+# Customer requests money from bank
+C *-> bank: {C, M, creditCard(C, bank), TicketOrder, Price, {C, M, N1, N2, N3, ProofOfId}inv(pk(mitId))}pk(bank)
+
+# Bank authorizes payment
+bank ->* C: {|C, M, {TicketOrder, Price}inv(pk(bank))|}sk(C,bank)
+
+C *->* M: {|C, M, {C, M, N1, N2, N3, ProofOfId}inv(pk(bank))|}sk(C, M)
+
+Goals:
+creditCard(C, bank) secret between C, bank
+bank authenticates C on ProofOfId
+
+# Takes too long to run for 2 sessions
+# Needs some nonces to be added
