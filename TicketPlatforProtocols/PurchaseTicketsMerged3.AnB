@@ -17,7 +17,7 @@ Actions:
 mitId *->* C: {|C, M, N1, {C, M, N1, ProofOfId}inv(pk(mitId))|}sk(C,mitId)
 
 # Customer requests a ticket
-C -> M: {|C, M, TicketOrder, N1, N2|}sk(C, M)
+C -> M: {|C, M, TicketOrder, N1, N2, {C, M, N1, ProofOfId}inv(pk(mitId))|}sk(C, M)
 
 # Merchant requests payment
 M -> C: {|C, M, TicketOrder, Price, N1, N2, N3|}sk(C, M)
@@ -37,4 +37,5 @@ C -> M: {|C, M, N1, N2, TicketOrder, {C, M, N1, Price}inv(pk(bank))|}sk(C, M)
 
 Goals:
 creditCard(C, bank) secret between C, bank
-bank authenticates C on ProofOfId
+bank authenticates C on ProofOfId, creditCard(C, bank)
+M authenticates C on ProofOfId, Price
