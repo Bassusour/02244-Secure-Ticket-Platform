@@ -1,0 +1,39 @@
+Protocol: Registration7
+
+Types:
+Agent C,M,mitId;
+Number Username, Password, UsrMitId, PwMitId, SharedKey;
+
+
+Knowledge:
+C: C, M, mitId, pk(mitId), pk(M), sk(C,mitId);
+M: C, M, mitId, pk(mitId), pk(M), inv(pk(M));
+mitId: C, M, mitId, pk(mitId), sk(C,mitId), pk(M), inv(pk(mitId));
+where C!=M, M!=mitId, C!=mitId
+
+Actions:
+# Customer registers with the merchant
+C -> M: {C, M, Username, Password, SharedKey, N1}pk(M)
+
+# Merchant requests mitID to authenticate the customer
+M -> mitId: {C, M, N1, N2}pk(mitId)
+mitId -> C: {|C, M, N1, N2, N3|}sk(C,mitId)
+
+# Customer verifies their identity with mitID
+C -> mitId: {C, M, UsrMitId, PwMitId, N1, N2, N3}pk(mitId)
+
+# mitID authenticates the customer with its signature
+mitId -> C: {|{C, M, N1, N2, N3, ProofOfId}inv(pk(mitId))|}sk(C,mitId)
+
+# Customer sends the proof of identity to the merchant
+C -> M: {|{C, M, N1, N2, N3, ProofOfId}inv(pk(mitId))|}SharedKey
+
+Goals:
+mitId authenticates C on UsrMitId, PwMitId
+M authenticates C on ProofOfId
+Username, Password guessable secret between C, M
+ProofOfId guessable secret between C, M
+
+# Merchant can now be sure of the customer's identity
+# mitId acts as a trusted third party to authenticate the customer
+# Nonces everywhere to prevent replay attacks (N is for C->M, N2 is for M->mitId, N3 is for mitId->C)
