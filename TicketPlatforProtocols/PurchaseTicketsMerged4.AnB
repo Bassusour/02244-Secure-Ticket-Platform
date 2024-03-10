@@ -4,9 +4,10 @@ Types:
 Agent C, M, bank, mitId;
 Function creditCard;
 Number ProofOfId, N1, N2, N3, ProofOfId, Price;
+Symmetric_key SharedKey, SharedKeyBank;
 
 Knowledge:
-C: C, M, mitId, pk(mitId), pk(M), pk(bank), sk(C, M), sk(C,mitId), creditCard(C, bank);
+C: C, M, mitId, pk(mitId), pk(M), pk(bank), sk(C,mitId), creditCard(C, bank);
 M: C, M, mitId, pk(mitId), pk(bank), pk(M), inv(pk(M)), sk(C, M);
 bank: C, M, bank, pk(M), pk(bank), pk(mitId), inv(pk(bank)), creditCard(C, bank);
 mitId: C, M, mitId, pk(mitId), pk(bank), sk(C,mitId), pk(M), inv(pk(mitId));
@@ -17,10 +18,10 @@ Actions:
 mitId -> C: {|C, M, N1, {C, M, N1, ProofOfId}inv(pk(mitId))|}sk(C,mitId)
 
 # Customer requests a ticket
-C -> M: {|C, M, TicketOrder, N1, N2, {C, M, N1, ProofOfId}inv(pk(mitId))|}sk(C, M)
+C -> M: {|C, M, TicketOrder, SharedKey, N1, N2, {C, M, N1, ProofOfId}inv(pk(mitId))|}pk(M)
 
 # Merchant requests payment
-M -> C: {|C, M, TicketOrder, Price, N1, N2, N3|}sk(C, M)
+M -> C: {|C, M, TicketOrder, Price, N1, N2, N3|}SharedKey
 
 # Customer requests money from bank
 C -> bank: {creditCard(C, bank), N1, N2, N3, C, M, Price, SharedKeyBank, {C, M, N1, ProofOfId}inv(pk(mitId))}pk(bank)
@@ -33,7 +34,7 @@ mitId -> bank : {{C, M, N1, ProofOfId}inv(pk(mitId))}pk(bank)
 bank -> C: {|C, M, N1, N2, {C, M, N1, Price}inv(pk(bank))|}SharedKeyBank
 
 # Customer sends payment to merchant
-C -> M: {|C, M, N1, N2, TicketOrder, {C, M, N1, Price}inv(pk(bank))|}sk(C, M)
+C -> M: {|C, M, N1, N2, TicketOrder, {C, M, N1, Price}inv(pk(bank))|}SharedKey
 
 Goals:
 creditCard(C, bank) secret between C, bank

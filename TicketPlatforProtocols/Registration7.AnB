@@ -2,7 +2,8 @@ Protocol: Registration7
 
 Types:
 Agent C,M,mitId;
-Number Username, Password, UsrMitId, PwMitId, SharedKey;
+Number Username, Password, UsrMitId, PwMitId;
+Symmetric_key SharedKey;
 
 
 Knowledge:
