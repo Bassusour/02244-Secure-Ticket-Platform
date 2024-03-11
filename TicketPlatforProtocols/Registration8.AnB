@@ -3,7 +3,7 @@ Protocol: Registration8
 Types:
 Agent C,M,mitId;
 Number Username, Password, UsrMitId, PwMitId, f1, f2;
-Symmetric_key SharedKey;
+Symmetric_key SharedKey, SharedKeyMitId;
 
 
 Knowledge:
@@ -33,6 +33,7 @@ Goals:
 mitId authenticates C on UsrMitId, PwMitId
 M authenticates C on ProofOfId
 Username, Password guessable secret between C, M
+UsrMitId, PwMitId guessable secret between C, mitId
 ProofOfId guessable secret between C, M
 
 # Merchant can now be sure of the customer's identity
