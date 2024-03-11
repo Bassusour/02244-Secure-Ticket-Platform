@@ -1,0 +1,42 @@
+Protocol: PurchaseTicketsMerged5
+
+Types: 
+Agent C, M, bank, mitId;
+Function creditCard;
+Number ProofOfId, N1, N2, N3, ProofOfId, Price, f1, f2;
+Symmetric_key SharedKey, SharedKeyBank;
+
+Knowledge:
+C: C, M, mitId, pk(mitId), pk(M), pk(bank), sk(C,mitId), creditCard(C, bank), f1, f2;
+M: C, M, mitId, pk(mitId), pk(bank), pk(M), inv(pk(M)), sk(C, M), f1, f2;
+bank: C, M, bank, pk(M), pk(bank), pk(mitId), inv(pk(bank)), creditCard(C, bank), f1, f2;
+mitId: C, M, mitId, pk(mitId), pk(bank), sk(C,mitId), pk(M), inv(pk(mitId)), f2;
+where C!=M, C!=bank, M!=bank
+
+Actions:
+# Old protocol
+mitId -> C: {|C, M, N1, {C, M, N1, ProofOfId}inv(pk(mitId))|}sk(C,mitId)
+
+# Customer requests a ticket
+C -> M: {|f1, C, M, TicketOrder, SharedKey, N1, N2, {C, M, N1, ProofOfId}inv(pk(mitId))|}pk(M)
+
+# Merchant requests payment
+M -> C: {|f1, C, M, TicketOrder, Price, N1, N2, N3|}SharedKey
+
+# Customer requests money from bank
+C -> bank: {f1, creditCard(C, bank), N1, N2, N3, C, M, Price, SharedKeyBank, {C, M, N1, ProofOfId}inv(pk(mitId))}pk(bank)
+
+# Bank authenticates proof with mitId (Needed to avoid MITM attack)
+bank -> mitId: {{C, M, N1, ProofOfId}inv(pk(mitId))}pk(mitId)
+mitId -> bank : {f2, {C, M, N1, ProofOfId}inv(pk(mitId))}pk(bank)
+
+# Bank authorizes payment
+bank -> C: {|f2, C, M, N1, N2, {C, M, N1, Price}inv(pk(bank))|}SharedKeyBank
+
+# Customer sends payment to merchant
+C -> M: {|f2, C, M, N1, N2, TicketOrder, {C, M, N1, Price}inv(pk(bank))|}SharedKey
+
+Goals:
+creditCard(C, bank) secret between C, bank
+bank authenticates C on ProofOfId, creditCard(C, bank)
+M authenticates C on ProofOfId, Price
