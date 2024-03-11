@@ -3,7 +3,6 @@ Protocol: Registration4
 Types:
 Agent C,M,mitId;
 Number Username, Password, UsrMitId, PwMitId, N1;
-Function mac
 
 Knowledge:
 C: C, M, mitId, pk(mitId), pk(M), sk(C, M), sk(C,mitId);
